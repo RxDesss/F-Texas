@@ -1,13 +1,11 @@
 import 'package:demo_project/GetX%20Controller/cartController.dart';
 import 'package:demo_project/GetX%20Controller/productdetailController.dart';
 import 'package:demo_project/GetX%20Controller/shippingControlle.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class CartScreeen extends StatefulWidget {
-  const CartScreeen({Key? key}) : super(key: key);
+  const CartScreeen({super.key});
 
   @override
   State<CartScreeen> createState() => _CartScreeenState();
@@ -15,16 +13,13 @@ class CartScreeen extends StatefulWidget {
 
 class _CartScreeenState extends State<CartScreeen> {
   final CartController cartController = Get.put(CartController());
-  final ProductDetailController productDetailContoller =
-      Get.put(ProductDetailController());
-      final ShippingController shippingController=Get.put(ShippingController());
-  late Future<List<Map<String, dynamic>>> _futureCartData; // Adjusted type
+  final ProductDetailController productDetailContoller = Get.put(ProductDetailController());
+  final ShippingController shippingController = Get.put(ShippingController());
+  late Future<List<Map<String, dynamic>>> _futureCartData;
 
   void _fetchCartData() {
     _futureCartData = cartController.getCartItems();
-
     _futureCartData.catchError((error) {
-      print("Error occurred while fetching cart items: $error");
     });
   }
 
@@ -38,7 +33,7 @@ class _CartScreeenState extends State<CartScreeen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Cart"),
+        title: const Text("My Cart"),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -50,97 +45,86 @@ class _CartScreeenState extends State<CartScreeen> {
                 future: _futureCartData,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.delete_outline,
+                            size: 100,
+                            color: Colors.grey,
+                          ),
+                          Text(
+                            'Your cart is empty',
+                            style: TextStyle(fontSize: 20, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    );
                   } else {
-                    // Data is loaded
-                    // Data is loaded
                     return ListView.builder(
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
+                        final item = snapshot.data![index];
                         return Container(
-                          padding: EdgeInsets.all(10),
-                          margin: EdgeInsets.only(
-                              left: 10, right: 10, bottom: 10),
-                          decoration: BoxDecoration(
-                              color: const Color.fromARGB(
-                                  255, 147, 183, 245)),
+                          padding: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                          decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 147, 183, 245),
+                          ),
                           child: Row(
                             children: [
                               Expanded(
                                 flex: 5,
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      margin: EdgeInsets.all(10),
-                                      height: MediaQuery.of(context)
-                                              .size
-                                              .height *
-                                          0.10,
+                                      margin: const EdgeInsets.all(10),
+                                      height: MediaQuery.of(context).size.height * 0.10,
                                       width: double.infinity,
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.blueGrey[50]),
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.blueGrey[50],
+                                      ),
                                       child: Image.network(
-                                        snapshot.data![index]
-                                            ['product_image'],
+                                        item['product_image'],
                                         fit: BoxFit.fill,
                                       ),
                                     ),
-                                    Container(
-                                      height: MediaQuery.of(context)
-                                              .size
-                                              .height *
-                                          0.03,
+                                    SizedBox(
+                                      height: MediaQuery.of(context).size.height * 0.03,
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.end,
                                         children: [
                                           IconButton(
-                                              iconSize: 18.0,
-                                              onPressed: () {
-                                                cartController
-                                                    .minusProductQuantity(
-                                                        snapshot.data![index]
-                                                            ['id'],
-                                                        snapshot.data![index]
-                                                            ['total'])
-                                                    .then((_) {
-                                                  setState(() {
-                                                    _fetchCartData();
-                                                  });
-                                                });
-                                              },
-                                              icon: Icon(Icons.remove)),
-                                          Text(snapshot.data![index]
-                                              ['quantity']),
+                                            iconSize: 18.0,
+                                            onPressed: () {
+                                              cartController
+                                                  .minusProductQuantity(item['id'], item['total'])
+                                                  .then((_) => setState(_fetchCartData));
+                                            },
+                                            icon: const Icon(Icons.remove),
+                                          ),
+                                          Text(item['quantity']),
                                           IconButton(
-                                              iconSize: 18.0,
-                                              onPressed: () {
-                                                cartController
-                                                    .addProductQuantity(
-                                                        snapshot.data![index]
-                                                            ['id'],
-                                                        snapshot.data![index]
-                                                            ['total'])
-                                                    .then((_) {
-                                                  setState(() {
-                                                    _fetchCartData();
-                                                  });
-                                                });
-                                              },
-                                              icon: Icon(Icons.add)),
+                                            iconSize: 18.0,
+                                            onPressed: () {
+                                              cartController
+                                                  .addProductQuantity(item['id'], item['total'])
+                                                  .then((_) => setState(_fetchCartData));
+                                            },
+                                            icon: const Icon(Icons.add),
+                                          ),
                                         ],
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
@@ -149,105 +133,72 @@ class _CartScreeenState extends State<CartScreeen> {
                                 child: Column(
                                   children: [
                                     Container(
-                                      padding: EdgeInsets.all(10),
-                                      height: MediaQuery.of(context)
-                                              .size
-                                              .height *
-                                          0.15,
+                                      padding: const EdgeInsets.all(10),
+                                      height: MediaQuery.of(context).size.height * 0.15,
                                       width: double.infinity,
                                       child: Column(
                                         children: [
-                                          Container(
+                                          SizedBox(
                                             width: double.infinity,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.05,
+                                            height: MediaQuery.of(context).size.height * 0.05,
                                             child: Text(
-                                              snapshot.data![index]
-                                                  ['product_name'],
-                                              style: TextStyle(
-                                                  overflow:
-                                                      TextOverflow.fade,
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                      FontWeight.bold),
+                                              item['product_name'],
+                                              style: const TextStyle(
+                                                overflow: TextOverflow.fade,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                           Row(
                                             children: [
-                                              Text(
+                                              const Text(
                                                 "Quantity : ",
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                style: TextStyle(fontWeight: FontWeight.bold),
                                               ),
-                                              Text(snapshot.data![index]
-                                                  ['quantity']),
+                                              Text(item['quantity']),
                                             ],
                                           ),
                                           Row(
                                             children: [
-                                              Text(
+                                              const Text(
                                                 "TotalPrice : ",
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                style: TextStyle(fontWeight: FontWeight.bold),
                                               ),
-                                              Text(
-                                                  "\$ ${snapshot.data![index]['total'].toString().length >= 5 ? snapshot.data![index]['total'].toString().substring(0, 5): snapshot.data![index]['total'].toString()}"),
+                                              Text("\$ ${item['total'].toString().length >= 5 ? item['total'].toString().substring(0, 5) : item['total'].toString()}"),
                                             ],
-                                          )
+                                          ),
                                         ],
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
                               Expanded(
                                 flex: 2,
-                                child: Container(
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        child: IconButton(
-                                          icon: Icon(Icons.info),
-                                          onPressed: () {
-                                            productDetailContoller
-                                                .getProductDetail(
-                                                    snapshot.data![index]
-                                                        ['id']);
-                                          },
-                                          color: Color.fromARGB(
-                                              255, 6, 104, 11),
-                                          iconSize: 20.0,
-                                          tooltip: 'Love',
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.delete),
-                                        onPressed: () {
-                                          cartController
-                                              .deleteCartItem(
-                                                  snapshot.data![index]
-                                                      ['id'])
-                                              .then((_) {
-                                            setState(() {
-                                              _fetchCartData();
-                                            });
-                                          });
-                                        },
-                                        color: Color.fromARGB(
-                                            255, 243, 34, 34),
-                                        iconSize: 20.0,
-                                        tooltip: 'Love',
-                                      ),
-                                    ],
-                                  ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.info),
+                                      onPressed: () {
+                                        productDetailContoller.getProductDetail(item['id']);
+                                      },
+                                      color: const Color.fromARGB(255, 6, 104, 11),
+                                      iconSize: 20.0,
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete),
+                                      onPressed: () {
+                                        cartController
+                                            .deleteCartItem(item['id'])
+                                            .then((_) => setState(_fetchCartData));
+                                      },
+                                      color: const Color.fromARGB(255, 243, 34, 34),
+                                      iconSize: 20.0,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -260,56 +211,60 @@ class _CartScreeenState extends State<CartScreeen> {
               ),
             ),
             Expanded(
-                flex: 2,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Row(
-                        children: [
-                          Text("Sub Total - ",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold)),
-                          FutureBuilder<List<Map<String, dynamic>>>(
-                            future: _futureCartData,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return CircularProgressIndicator();
-                              } else {
-                                double totalAmount = 0;
-                                if (snapshot.hasData) {
-                                  snapshot.data!.forEach((item) {
-                                    totalAmount += item['total'];
-                                  });
+              flex: 2,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Row(
+                      children: [
+                        const Text(
+                          "Sub Total - ",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        FutureBuilder<List<Map<String, dynamic>>>(
+                          future: _futureCartData,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            } else {
+                              double totalAmount = 0;
+                              if (snapshot.hasData) {
+                                for (var item in snapshot.data!) {
+                                  totalAmount += item['total'];
                                 }
-                                return Text(
-                                    "\$ ${totalAmount.toStringAsFixed(2)}",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold));
                               }
-                            },
-                          )
-                        ],
-                      ),
+                              return Text(
+                                "\$ ${totalAmount.toStringAsFixed(2)}",
+                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                              );
+                            }
+                          },
+                        ),
+                      ],
                     ),
-                    Container(
-                      width: double.infinity,
-                      margin: EdgeInsets.only(left: 30, right: 30),
-                      decoration: BoxDecoration(
-                          color: Colors.blueAccent,
-                          borderRadius: BorderRadius.circular(25)),
-                      child: TextButton(
-                        onPressed: () {
-                         shippingController.shipping();
-                        },
-                        child: Text("Proceed to Checkout"),
-                      ),
-                    ),
-                  ],
-                ))
+                  ),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                    future: _futureCartData,
+                    builder: (context, snapshot) {
+                      bool isCartEmpty = snapshot.hasData && snapshot.data!.isEmpty;
+                      return Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.symmetric(horizontal: 30),
+                        decoration: BoxDecoration(
+                          color: isCartEmpty ? Colors.grey : Colors.blueAccent,
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: TextButton(
+                          onPressed: isCartEmpty ? null : shippingController.shipping,
+                          child: const Text("Proceed to Checkout"),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

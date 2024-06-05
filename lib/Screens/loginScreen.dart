@@ -1,7 +1,7 @@
-import 'package:demo_project/GetX%20Controller/loginController.dart';
-import 'package:demo_project/Screens/registerScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:demo_project/GetX%20Controller/loginController.dart';
+import 'package:demo_project/Screens/registerScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,26 +10,18 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-
-
 class _LoginScreenState extends State<LoginScreen> {
-final LoginController logincontroller=Get.put(LoginController());
+  final LoginController logincontroller = Get.put(LoginController());
   final _formKey = GlobalKey<FormState>();
   String? username;
   String? password;
 
-void _saveForm(BuildContext context) {
+  void _saveForm(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
       logincontroller.fetchLogin(username, password, context);
-     
-      // fetchdata(context);
-      // loginController.fetchLogin(username, password, context);
-      // feature.fetchProduct(productName);
-      // print("$username - $password");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +34,7 @@ void _saveForm(BuildContext context) {
               child: SizedBox(
                 height: MediaQuery.of(context).size.height * 0.92,
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // Adjusted mainAxisSize
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -62,7 +54,7 @@ void _saveForm(BuildContext context) {
                       child: Column(
                         children: [
                           TextFormField(
-                            initialValue:'dev@desss.com' ,
+                            initialValue: 'dev@desss.com',
                             onSaved: (value) {
                               setState(() {
                                 username = value;
@@ -105,32 +97,37 @@ void _saveForm(BuildContext context) {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.04,
                     ),
-                    Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.blue,
-                      ),
-                      width: MediaQuery.of(context).size.width * 0.60,
-                      child: TextButton(
-                        onPressed: () {
-                          _saveForm(context);
-                        },
-                        child: Text(
-                          "Login",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ),
-                    ),
+                    Obx(() => Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.blue,
+                          ),
+                          width: MediaQuery.of(context).size.width * 0.60,
+                          child: TextButton(
+                            onPressed: () {
+                              _saveForm(context);
+                            },
+                            child: logincontroller.isLoading.value
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                : const Text(
+                                    "Login",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                          ),
+                        )),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.04,
                     ),
                     const Text("Don't have an account"),
                     TextButton(
                       onPressed: () {
-                      Get.to(()=>RegisterScreen());
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //     builder: (context) => const RegisterScreen()));
+                        Get.to(() => const RegisterScreen());
                       },
                       child: const Text("Sign Up"),
                     )
@@ -143,4 +140,4 @@ void _saveForm(BuildContext context) {
       ),
     );
   }
-  }
+}

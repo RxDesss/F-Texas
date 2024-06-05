@@ -1,7 +1,5 @@
 import 'package:demo_project/GetX%20Controller/cartController.dart';
-import 'package:demo_project/GetX%20Controller/loginController.dart';
 import 'package:demo_project/GetX%20Controller/productdetailController.dart';
-import 'package:demo_project/Screens/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -31,7 +29,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   void getData() {
  
-    for (var obj in productDetailContoller.ProdectDetailList) {
+    for (var obj in productDetailContoller.productDetailList) {
       setState(() {
         productName = obj['product_name'];
         productSku = obj['sku'];
