@@ -37,8 +37,9 @@ Future<void> fetchDataAndNavigate(BuildContext context) async {
     if (res.statusCode == 200) {
       final json = jsonDecode(res.body);
       featureProductList.value = json['data'];
+      print(featureProductList);
     } else {
-      print("Feature product list not working");
+      // print("Feature product list not working");
     }
   }
 
@@ -49,7 +50,7 @@ Future<void> fetchDataAndNavigate(BuildContext context) async {
       final json = jsonDecode(res.body);
       categoryProductList.value = json['data'];
     } else {
-      print("Category product list not working");
+      // print("Category product list not working");
     }
   }
 
@@ -58,17 +59,17 @@ Future<void> fetchDataAndNavigate(BuildContext context) async {
     subCategoryData.assign([]);
     if (categoryName == '** Grab Bag Deals **') {
        Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
-      String noProductUrl = 'https://www.texasknife.com/dynamic/texasknifeapi.php?action=cus_category_product&category=${categoryName}';
+      String noProductUrl = 'https://www.texasknife.com/dynamic/texasknifeapi.php?action=cus_category_product&category=$categoryName';
       var response = await http.get(Uri.parse(noProductUrl));
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
         noCategoryData.assign(json['data']);
       }
       Get.back();
-      Get.to(() => NoCategoryPage());
+      Get.to(() => const NoCategoryPage());
     } else {
       Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
-      String url = 'https://www.texasknife.com/dynamic/texasknifeapi.php?action=cus_sub_category&category_id=${categoryId}';
+      String url = 'https://www.texasknife.com/dynamic/texasknifeapi.php?action=cus_sub_category&category_id=$categoryId';
       var res = await http.get(Uri.parse(url));
       if (res.statusCode == 200) {
         final json = jsonDecode(res.body);
@@ -82,9 +83,9 @@ Future<void> fetchDataAndNavigate(BuildContext context) async {
 
   Future<void> getSubSubCategory(BuildContext context, String productSubCategoryName) async {
         Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
-  
+          
     subSubCategoryData.assign([]);
-    String url = "https://www.texasknife.com/dynamic/texasknifeapi.php?action=cus_subcategory_product&category=${productCategoryName}&sub_category=${productSubCategoryName}";
+    String url = "https://www.texasknife.com/dynamic/texasknifeapi.php?action=cus_subcategory_product&category=$productCategoryName&sub_category=$productSubCategoryName";
     var res = await http.get(Uri.parse(url));
     if (res.statusCode == 200) {
       final json = jsonDecode(res.body);

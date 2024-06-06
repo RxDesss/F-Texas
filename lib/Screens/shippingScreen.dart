@@ -4,7 +4,7 @@ import 'package:demo_project/GetX%20Controller/cartController.dart';
 import 'package:demo_project/GetX%20Controller/shippingControlle.dart';
 
 class ShippingScreen extends StatelessWidget {
-  const ShippingScreen({Key? key}) : super(key: key);
+  const ShippingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +47,15 @@ class ShippingScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              child: ElevatedButton(
-                onPressed: () {
-                  shippingController.fetchContinueToPayment();
-                },
-                child: const Text("Payment"),
-              ),
+              child: Obx(() {
+                bool isShippingMethodSelected = shippingController.shippingMethodTaxName.isNotEmpty;
+                return ElevatedButton(
+                  onPressed: isShippingMethodSelected ? () {
+                    shippingController.fetchContinueToPayment();
+                  } : null,
+                  child: Text(isShippingMethodSelected ? "Payment" : "Select Shipping Method"),
+                );
+              }),
             ),
           ],
         ),
@@ -197,13 +200,57 @@ Widget taxItemSection(BuildContext context, ShippingController shippingControlle
                     final String optionName = option.split('||')[0];
                     final String optionValue = option.split('||')[1];
 
-                    return ShippingOptionTile(
-                      optionName: optionName,
-                      optionValue: optionValue,
-                    );
+                    if (index == 0) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text("United Parcel Service", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          ),
+                          ShippingOptionTile(
+                            optionName: optionName,
+                            optionValue: optionValue,
+                          ),
+                        ],
+                      );
+                    } else if (index == 4) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text("United State Postal Service", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          ),
+                          ShippingOptionTile(
+                            optionName: optionName,
+                            optionValue: optionValue,
+                          ),
+                        ],
+                      );
+                    } else if (index == 5) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text("Store PickUp", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          ),
+                          ShippingOptionTile(
+                            optionName: optionName,
+                            optionValue: optionValue,
+                          ),
+                        ],
+                      );
+                    } else {
+                      return ShippingOptionTile(
+                        optionName: optionName,
+                        optionValue: optionValue,
+                      );
+                    }
                   },
                 )
-              : const Center(child: Text('No shipping methods available')),
+              : const Center(child: CircularProgressIndicator()),
         ),
       ),
     ],
@@ -221,28 +268,29 @@ class ShippingOptionTile extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _ShippingOptionTileState createState() => _ShippingOptionTileState();
 }
 
 class _ShippingOptionTileState extends State<ShippingOptionTile> {
   final ShippingController shippingController = Get.put(ShippingController());
-  bool _isSelected = false;
 
   @override
   Widget build(BuildContext context) {
-    return RadioListTile(
-      title: Text(widget.optionName),
-      value: widget.optionValue,
-      groupValue: _isSelected ? widget.optionName : null,
-      onChanged: (value) {
-        shippingController.shippingMethodTax.value = value!;
-        shippingController.shippingMethodTaxName.value = "${widget.optionName} - ${widget.optionValue}";
-        shippingController.getEstimatedSalesTax();
-        setState(() {
-          _isSelected = true;
-        });
-      },
-      subtitle: Text(widget.optionValue),
-    );
+    return Obx(() {
+      return RadioListTile(
+        title: Text(widget.optionName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        value: widget.optionName,
+        groupValue: shippingController.shippingMethodTaxName.value,
+        onChanged: (String? value) {
+          if (value != null) {
+            shippingController.shippingMethodTax.value = widget.optionValue;
+            shippingController.shippingMethodTaxName.value = value;
+            shippingController.getEstimatedSalesTax();
+          }
+        },
+        secondary: Text(widget.optionValue),
+      );
+    });
   }
 }

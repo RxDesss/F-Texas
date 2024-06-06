@@ -44,6 +44,10 @@ dependencies:
   flutter_html: ^2.0.0
   logger: ^2.2.0
   cached_network_image: ^3.3.1
+  fluttertoast: ^8.2.6
+  flutter_emoji: ^2.5.1
+  flutter_launcher_icons: ^0.11.0
+  flutter_native_splash: ^2.2.0+1
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +63,21 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"  # Path to your icon image
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/splash.png
+  android: true
+  ios: true
+  android_gravity: center
+  ios_content_mode: scaleAspectFill
+  android_disable_fullscreen: true
+  web: true # If you want to add a splash screen for Flutter web
+
 # The following section is specific to Flutter packages.
 flutter:
 
@@ -69,6 +88,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/icon/icon.png
+    - assets/splash.png
     - assets/TexasImage.png
     - assets/cimg/1.png
     - assets/cimg/2.png
@@ -81,7 +102,6 @@ flutter:
     - assets/cimg/9.png
     - assets/cimg/10.png
     - assets/cimg/11.png
-    - assets/video1.mp4
     - assets/card.png
     
   #   - images/a_dot_ham.jpeg
