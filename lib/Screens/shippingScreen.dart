@@ -144,7 +144,7 @@ Widget orderItemsSection(BuildContext context, CartController cartController,shi
         ),
           Obx(()=>Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text("Sub Total",style: TextStyle(fontWeight: FontWeight.bold),), Text("\$ ${cartController.totalAmount1.toString().length >= 5 ? cartController.totalAmount.toString().substring(0, 5) : cartController.totalAmount.toString()}")],
+          children: [Text("Sub Total",style: TextStyle(fontWeight: FontWeight.bold),), Text("\$ ${cartController.totalAmount1.toString().length >= 5 ? cartController.totalAmount.toString().substring(0, 4) : cartController.totalAmount.toString()}")],
            ) ),
        Obx(() => Row(
   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -192,9 +192,9 @@ Widget taxItemSection(BuildContext context, ShippingController shippingControlle
         child: Text("Shipping Method",style: TextStyle(fontSize:16,fontWeight: FontWeight.bold),),
       ),
       Container(
-        height: MediaQuery.of(context).size.height *0.3,
+        height: MediaQuery.of(context).size.height *0.4,
         width:double.infinity,
-        color: Colors.deepOrange[50],
+        color: const Color.fromARGB(255, 248, 243, 242),
         child: shippingController.shippingMethodsData.isNotEmpty ? Obx(
           () => ListView.builder(
             itemCount: shippingController.shippingMethodsData[0]['shipping'].split(',').length,
