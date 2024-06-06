@@ -1,9 +1,10 @@
+// ignore_for_file: file_names, non_constant_identifier_names
+
 import 'package:demo_project/GetX%20Controller/addressControlle.dart';
 import 'package:demo_project/GetX%20Controller/cartController.dart';
 import 'package:demo_project/GetX%20Controller/shippingControlle.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -14,43 +15,48 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  final CartController cartController=Get.put(CartController());
-  final ShippingController shippingController=Get.put(ShippingController());
-  final AddressController addressController=Get.put(AddressController());
+  final CartController cartController = Get.put(CartController());
+  final ShippingController shippingController = Get.put(ShippingController());
+  final AddressController addressController = Get.put(AddressController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Checkout"),
+        title: const Text("Checkout"),
         centerTitle: true,
       ),
       body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                flex:13,
-                child: Content(context, cartController, shippingController,addressController)),
-              Expanded(
-                 flex:1,
-                child: button(shippingController,context))
-            ],
-          ) ,),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 13,
+              child: Content(context, cartController, shippingController, addressController),
+            ),
+            Expanded(
+              flex: 1,
+              child: CheckoutButton(shippingController, context),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
-Widget Content(context, cartController, shippingController,addressController){
+// ignore: non_constant_identifier_names
+Widget Content(BuildContext context, CartController cartController, ShippingController shippingController, AddressController addressController) {
   return SingleChildScrollView(
     child: Column(
       children: [
-     orderItemsSection(context, cartController, shippingController),
-     addressMetodPaywith_Section(context,cartController, shippingController,addressController)
+        OrderItemsSection(context, cartController, shippingController),
+        AddressMethodPayWithSection(context, cartController, shippingController, addressController),
       ],
     ),
   );
 }
 
-Widget orderItemsSection(BuildContext context, CartController cartController,shippingController) {
+Widget OrderItemsSection(BuildContext context, CartController cartController, ShippingController shippingController) {
   return Container(
     padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
     margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
@@ -62,7 +68,7 @@ Widget orderItemsSection(BuildContext context, CartController cartController,shi
           color: Colors.black.withOpacity(0.15),
           spreadRadius: 0,
           blurRadius: 10,
-          offset: Offset(0, 5), // changes position of shadow
+          offset: const Offset(0, 5),
         ),
       ],
     ),
@@ -71,8 +77,8 @@ Widget orderItemsSection(BuildContext context, CartController cartController,shi
       children: [
         for (int index = 0; index < cartController.cartData.length; index++)
           Container(
-            padding: EdgeInsets.all(5),
-            margin: EdgeInsets.only(bottom: 5, top: 5),
+            padding: const EdgeInsets.all(5),
+            margin: const EdgeInsets.only(bottom: 5, top: 5),
             decoration: BoxDecoration(
               color: Colors.blueGrey[50],
               borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.01),
@@ -94,32 +100,33 @@ Widget orderItemsSection(BuildContext context, CartController cartController,shi
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
+                      SizedBox(
                         width: MediaQuery.of(context).size.width * 0.65,
                         height: MediaQuery.of(context).size.height * 0.05,
                         child: Text(
                           cartController.cartData[index]['product_name'],
-                          style: TextStyle(
+                          style: const TextStyle(
                             overflow: TextOverflow.fade,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      Text("${cartController.cartData[index]['quantity']} * ${cartController.cartData[index]['product_price']}",
-                        style: TextStyle(
+                      Text(
+                        "${cartController.cartData[index]['quantity']} * ${cartController.cartData[index]['product_price']}",
+                        style: const TextStyle(
                           fontSize: 12,
                         ),
                       ),
                       Text(
-                        "Total Price: \$${cartController.cartData[index]['total'].toString().length >= 5 ? cartController.cartData[index]['total'].toString().substring(0, 5) : cartController.cartData[index]['total'].toString()}",
-                        style: TextStyle(
+                        "Total Price: \$${cartController.cartData[index]['total'].toString().substring(0, 5)}",
+                        style: const TextStyle(
                           fontSize: 12,
                         ),
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -130,132 +137,151 @@ Widget orderItemsSection(BuildContext context, CartController cartController,shi
           indent: MediaQuery.of(context).size.height * 0.01,
           endIndent: MediaQuery.of(context).size.height * 0.01,
         ),
-          Obx(()=>Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text("Sub Total",style: TextStyle(fontWeight: FontWeight.bold),), Text("\$ ${cartController.totalAmount1.toString().length >= 5 ? cartController.totalAmount.toString().substring(0, 5) : cartController.totalAmount.toString()}")],
-           ) ),
-       Obx(() => Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    Text("Shipping Charge", style: TextStyle(fontWeight: FontWeight.bold)),
-    Text("${shippingController.shippingMethodTax}")
-  ],
-)),
-      Obx(() => Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    Text("Estimated salesTax", style: TextStyle(fontWeight: FontWeight.bold)),
-    Text("\$ ${shippingController.EstimatedSalesTax.toString().length>=5 ? shippingController.EstimatedSalesTax.toString().substring(0,5):shippingController.EstimatedSalesTax.toString()}")
-  ],
-)),
+        Obx(
+          () => Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Sub Total",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text("\$ ${cartController.totalAmount1.toString().substring(0, 4)}"),
+            ],
+          ),
+        ),
+        Obx(
+          () => Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Shipping Charge",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text("${shippingController.shippingMethodTax}"),
+            ],
+          ),
+        ),
+        Obx(
+          () => Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Estimated salesTax",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text("\$ ${shippingController.EstimatedSalesTax.toString().substring(0, 5)}"),
+            ],
+          ),
+        ),
         Divider(
           color: Colors.black,
-          height: MediaQuery.of(context).size.height *
-              0.03, // Total height of the divider including space
-          thickness: 2, // Thickness of the line itself
-          indent: MediaQuery.of(context).size.height *
-              0.01, // Starting space of the line
-          endIndent: MediaQuery.of(context).size.height *
-              0.01, // Ending space of the line
+          height: MediaQuery.of(context).size.height * 0.03,
+          thickness: 2,
+          indent: MediaQuery.of(context).size.height * 0.01,
+          endIndent: MediaQuery.of(context).size.height * 0.01,
         ),
-         Obx(() => Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    Text("Total", style: TextStyle(fontWeight: FontWeight.bold)),
-    Text("\$ ${shippingController.NetAmount.toString().length>=5 ? shippingController.NetAmount.toString().substring(0,5):shippingController.NetAmount.toString()}")
-  ],
-)),
-        // Other rows...
+        Obx(
+          () => Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Total",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text("\$ ${shippingController.NetAmount.toString().substring(0, 5)}"),
+            ],
+          ),
+        ),
       ],
     ),
   );
 }
 
-
-Widget addressMetodPaywith_Section(context,cartController, shippingController,addressController){
+Widget AddressMethodPayWithSection(BuildContext context, CartController cartController, ShippingController shippingController, AddressController addressController) {
   return Container(
-    padding: EdgeInsets.all(10),
-    margin: EdgeInsets.all(10),
+    padding: const EdgeInsets.all(10),
+    margin: const EdgeInsets.all(10),
     child: Column(
       children: [
-       Row(
-         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("Contact"),
-          Text(addressController.AddressDatas[0]['bill_email1'])
-        ],
-       ),
-       dividerFunction(context),
-  repeatAddress(context,cartController, shippingController,addressController,"Shipping To"),
-      dividerFunction(context),
-   repeatAddress(context,cartController, shippingController,addressController,"Billing To"),
-    dividerFunction(context),
-     Row(
-         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("PayWith"),
-          Text('${shippingController.PayWith}')
-        ],
-       ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("Contact"),
+            Text(addressController.AddressDatas[0]['bill_email1']),
+          ],
+        ),
+        const DividerWidget(),
+        RepeatAddress(context, addressController, "Shipping To"),
+        const DividerWidget(),
+        RepeatAddress(context, addressController, "Billing To"),
+        const DividerWidget(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("Pay With"),
+            Text('${shippingController.PayWith}'),
+          ],
+        ),
       ],
     ),
   );
 }
 
-
-Widget repeatAddress(context,cartController, shippingController,addressController,heading){
+Widget RepeatAddress(BuildContext context, AddressController addressController, String heading) {
   return Row(
-         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(heading),
-          Container(
-            width: MediaQuery.of(context).size.width*0.5,
-            alignment: Alignment.centerRight,
-            // color: Colors.amber,
-            child: Column(
-              
-              children: [
-               Text("${addressController.AddressDatas[0]['bill_name']}",textAlign:TextAlign.right,),
-               Text("${addressController.AddressDatas[0]['bill_l_name']}",textAlign:TextAlign.right,), 
-               Text("${addressController.AddressDatas[0]['bill_address1']}",textAlign:TextAlign.right,), 
-               Text("${addressController.AddressDatas[0]['bill_address2']}",textAlign:TextAlign.right,),
-               Text("${addressController.AddressDatas[0]['bill_town_city']}",textAlign:TextAlign.right,),
-               Text("${addressController.AddressDatas[0]['bill_state_region1']}",textAlign:TextAlign.right,),
-               Text("${addressController.AddressDatas[0]['bill_country']}",textAlign:TextAlign.right,),
-               Text("${addressController.AddressDatas[0]['bill_zip_code']}",textAlign:TextAlign.right,),
-              ],
-            ),
-          )
-        ],
-       );
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(heading),
+      Container(
+        width: MediaQuery.of(context).size.width * 0.5,
+        alignment: Alignment.centerRight,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text("${addressController.AddressDatas[0]['bill_name']}"),
+            Text("${addressController.AddressDatas[0]['bill_l_name']}"),
+            Text("${addressController.AddressDatas[0]['bill_address1']}"),
+            Text("${addressController.AddressDatas[0]['bill_address2']}"),
+            Text("${addressController.AddressDatas[0]['bill_town_city']}"),
+            Text("${addressController.AddressDatas[0]['bill_state_region1']}"),
+            Text("${addressController.AddressDatas[0]['bill_country']}"),
+            Text("${addressController.AddressDatas[0]['bill_zip_code']}"),
+          ],
+        ),
+      ),
+    ],
+  );
 }
 
-Widget dividerFunction(context){
-  return  Divider(
-          color: Colors.black,
-          height: MediaQuery.of(context).size.height *
-              0.03, // Total height of the divider including space
-          thickness: 2, // Thickness of the line itself
-          indent: MediaQuery.of(context).size.height *
-              0.01, // Starting space of the line
-          endIndent: MediaQuery.of(context).size.height *
-              0.01, // Ending space of the line
-        );
+class DividerWidget extends StatelessWidget {
+  const DividerWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      color: Colors.black,
+      height: MediaQuery.of(context).size.height * 0.03,
+      thickness: 2,
+      indent: MediaQuery.of(context).size.height * 0.01,
+      endIndent: MediaQuery.of(context).size.height * 0.01,
+    );
+  }
 }
 
-Widget button(shippingController,context){
+Widget CheckoutButton(ShippingController shippingController, BuildContext context) {
   return Container(
-                      width: double.infinity,
-                      margin: EdgeInsets.only(left: 30, right: 30),
-                      decoration: BoxDecoration(
-                          color: Colors.blueAccent,
-                          borderRadius: BorderRadius.circular(25)),
-                      child: TextButton(
-                        onPressed: () {
-                             shippingController.fetchPlaceOrder(context);
-                        },
-                        child: Text("Place Order"),
-                      ),
-                    );
+    width: double.infinity,
+    margin: const EdgeInsets.symmetric(horizontal: 30),
+    decoration: BoxDecoration(
+      color: Colors.blueAccent,
+      borderRadius: BorderRadius.circular(25),
+    ),
+    child: TextButton(
+      onPressed: () {
+        shippingController.fetchPlaceOrder(context);
+      },
+      child: const Text("Place Order"),
+    ),
+  );
 }

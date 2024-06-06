@@ -21,13 +21,13 @@ class ProductDetailController extends GetxController {
       List data = json['data'];
       imageUrl = data[0]['msg'];
        Get.back(); // Close the loader dialog
-      Get.to(() => ProductDetailScreen());
+      Get.to(() => const ProductDetailScreen());
     }
   }
 
-  Future<void> getProductDetail(id) async {
+  Future<void> getProductDetail(sku) async {
     String url =
-        'https://www.texasknife.com/dynamic/texasknifeapi.php?action=sku&id=$id';
+        'https://www.texasknife.com/dynamic/texasknifeapi.php?action=product&sku=$sku';
     Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
     var res = await http.get(Uri.parse(url));
     if (res.statusCode == 200) {
@@ -36,7 +36,6 @@ class ProductDetailController extends GetxController {
       productDetailList = json["data"];
       String productBImage = productDetailList[0]['product_b_image'];
       await getProductImage(productBImage);
-     
     }
   }
 }

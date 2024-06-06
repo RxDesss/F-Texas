@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:demo_project/GetX%20Controller/shippingControlle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -35,7 +37,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              ImageContainer(context),
+              const ImageContainer(),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.05,
               ),
@@ -87,22 +89,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.05),
                 child: ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.amber[100]),
+                    backgroundColor: WidgetStateProperty.all(Colors.amber[100]),
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       if (showCardFields) {
-                        print('Card Number: ${cardNumberController.text}');
-                        print('CCV: ${ccvController.text}');
-                        print('End Date: ${endDateController.text}');
                         shippingController.fetchPayment("Credit Card");
                         shippingController.PayWith.value = "Credit Card";
                       } else if (showMoneyOrderField) {
-                        print('Money Order: ${moneyOrderController.text}');
                         shippingController.fetchPayment("Money Order");
                         shippingController.PayWith.value = "Money Order";
                       } else if (showCheckNumberField) {
-                        print('Cheque Number: ${checkNumberController.text}');
                         shippingController.fetchPayment("Cheque");
                         shippingController.PayWith.value = "Cheque";
                       }
@@ -119,12 +116,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 }
 
-Widget ImageContainer(BuildContext context) {
-  return Container(
-    width: double.infinity,
-    height: MediaQuery.of(context).size.height * 0.22,
-    child: Image.asset("assets/card.png", fit: BoxFit.cover),
-  );
+class ImageContainer extends StatelessWidget {
+  const ImageContainer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.22,
+      child: Image.asset("assets/card.png", fit: BoxFit.cover),
+    );
+  }
 }
 
 class PaymentContainer extends StatelessWidget {
@@ -141,6 +143,7 @@ class PaymentContainer extends StatelessWidget {
   final ValueChanged<bool?>? onCheckNumberCheckboxChanged;
 
   const PaymentContainer({
+    super.key,
     required this.showCardFields,
     required this.showMoneyOrderField,
     required this.showCheckNumberField,
@@ -222,7 +225,7 @@ class PaymentContainer extends StatelessWidget {
 class PaymentFieldContainer extends StatelessWidget {
   final List<Widget> children;
 
-  const PaymentFieldContainer({required this.children});
+  const PaymentFieldContainer({super.key, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -247,6 +250,7 @@ class CustomTextFormField extends StatelessWidget {
   final String validationMessage;
 
   const CustomTextFormField({
+    super.key,
     required this.controller,
     required this.labelText,
     required this.validationMessage,

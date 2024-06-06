@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> apiproductImage = [];
   List<String> apicategoryName = [];
   List<String> apicategoryImage = [];
+  List<String> apicategorysku = [];
   List<String> id=[];
   List<String> apicategoryId=[];
  
@@ -51,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
         apiproductPrice.add(obj['product_price']);
         apiproductNames.add(obj['product_name']);
         apiproductImage.add(obj['product_image']);
+        apicategorysku.add(obj['sku']);
         id.add(obj["id"]);
       });
     }
@@ -107,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
               search(context),
               categoryImage(context, categoryImages),
               featureProducts(
-                  context, apiproductImage, apiproductPrice, apiproductNames,getProductDetail,id),
+                  context, apiproductImage, apiproductPrice, apiproductNames,getProductDetail,id,apicategorysku),
               categoryProduct(context, apicategoryName, apicategoryImage,apicategoryId)
             ],
           ),
@@ -287,7 +289,7 @@ Widget categoryImage(context, categoryImages) {
 }
 
 Widget featureProducts(
-    context, apiproductImage, apiproductPrice, apiproductNames,getProductDetail,id) {
+    context, apiproductImage, apiproductPrice, apiproductNames,getProductDetail,id,apicategorysku) {
   return Column(
     children: [
       const Padding(
@@ -308,7 +310,8 @@ Widget featureProducts(
             return InkWell(
               onTap: (){
                 // print(index);
-                getProductDetail(id[index]);
+                // getProductDetail(id[index]);
+                productDetailContoller.getProductDetail(apicategorysku[index]);
               },
               child: Container(
                 width: MediaQuery.of(context).size.width *
@@ -347,7 +350,7 @@ Widget featureProducts(
                           padding: const EdgeInsets.only(left: 3),
                           child: Text(
                             "\$${apiproductPrice[index]}",
-                            style: TextStyle(fontSize: 12, color: Colors.white),
+                            style: const TextStyle(fontSize: 12, color: Colors.white),
                           ),
                         ),
                       ),
